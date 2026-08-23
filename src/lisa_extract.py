@@ -35,7 +35,7 @@ class LISADataset():
     #LisaDataset / Annotations / Annotations / daySequence1 / frameAnnotation-BOX.csv 
     def load_clip(self, clip_name):
         #sets the path to the Annotations / Annotations / clip_name
-        anno_file_path = os.path.join(FILE_PATH + "Annotations" + "Annotations" + clip_name)
+        anno_file_path = os.path.join(FILE_PATH, "Annotations", "Annotations", clip_name)
 
         if not os.path.exists(anno_file_path):
             print(f"Annotations directory not found: {anno_file_path}")

@@ -105,7 +105,7 @@ class LISADataset():
 
                 print(f"Loaded {len([s for s in self.samples if clip_name in s['image_path']])} images from {clip_name}")
 
-            def parse_label(self, annotations_label):
+    def parse_label(self, annotations_label):
                 #converts annotations tag to label
                 if 'go' in annotations_label or 'green' in annotations_label:
                     return 3
@@ -116,10 +116,10 @@ class LISADataset():
                 else:
                     return 0
 
-            def __len__(self):
+    def __len__(self):
                 return len(self.samples)
             #enables class to act as list, dictionary so we can access each object
-            def __getitem__(self, index):
+    def __getitem__(self, index):
                 sample = self.samples[index]
                 #convert to RGB format
                 img = Image.open(sample['image_path']).convert('RGB')

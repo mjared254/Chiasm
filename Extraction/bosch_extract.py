@@ -1,6 +1,7 @@
 import os
 import yaml
 import pandas as pd
+from PIL import Image
 
 FILE_PATH = '/Users/jaredmorales04/Chiasm/dataset_train_rgb/dataset_train_rgb'
 
@@ -102,6 +103,10 @@ class BOSCHDataset():
             return 0
     def __len__(self):
         return len(self.samples)
+
+    def __getitem__(self, index):
+        sample = self.samples[index]
+        img = Image.open(sample['image_path'])
 
     
 

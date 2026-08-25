@@ -13,9 +13,8 @@ print(f"Dataset File was found at {FILE_PATH}")
 #Handles the LisaDataset data
 class LISADataset():
 
-    def __init__(self, file_path, clip_names, transforms=None):
+    def __init__(self, file_path, clip_names):
         self.file_path = file_path
-        self.transforms = transforms
         #we still store data file_path, boxes, labels in array samples
         self.samples = []
         #when we create LISADataset Object, we pass clip_names two filenames.
@@ -47,12 +46,12 @@ class LISADataset():
         print(f"Processing {clip_name}: found {len(sub_clips)} subclips")
         #sorted subclips list
         for sub_clip in sorted(sub_clips):
-            csv_path = os.path.join(anno_file_path, sub_clip, 'frameAnnotation-BOX.csv')
+            csv_path = os.path.join(anno_file_path, sub_clip, 'frameAnnotationsBOX.csv')
 
             if not os.path.exists(csv_path):
                 continue
-
-            df = pd.read_csv(csv_path)
+            #reads the csv file using pandas, included delimiter as its seperated by ';'
+            df = pd.read_csv(csv_path, sep=';')
             #process each file in the dataframe, checks each one is different
             #never processes the same one
             for filename in df['Filename'].unique():
@@ -90,20 +89,25 @@ class LISADataset():
                 image_indv_path = os.path.join(self.file_path, clip_name, clip_name, sub_clip, 'frames', act_image_file)
 
                 if not os.path.exists(image_indv_path):
-                    img_path_alter = img_path.replace('.png', '.jpg').repalce('.PNG', '.jpg')
+                    img_path_alter = image_indv_path.replace('.png', '.jpg').replace('.PNG', '.jpg')
 
                     if os.path.exists(img_path_alter):
-                        img_path = img_path_alter
+                        image_indv_path = img_path_alter
                     else:
                         continue
                 #add data to samples array, holds the data we want
                 self.samples.append({
-                    'image_path' : img_path,
+                    'image_path' : image_indv_path,
                     'boxes' : boxes,
                     'labels': labels
                 })
+                
 
                 print(f"Loaded {len([s for s in self.samples if clip_name in s['image_path']])} images from {clip_name}")
+
+                samples_Data = pd.DataFrame(self.samples)
+
+                samples_Data.to_csv('lisa_samples.csv', index=False)
 
     def parse_label(self, annotations_label):
                 #converts annotations tag to label
@@ -123,3 +127,19 @@ class LISADataset():
                 sample = self.samples[index]
                 #convert to RGB format
                 img = Image.open(sample['image_path']).convert('RGB')
+
+         
+
+def main():
+    try:
+          dataset = LISADataset(
+               file_path=FILE_PATH,
+               clip_names=['dayTrain']
+          )
+
+    except Exception as e:
+         print(f"\n Error Loading Dataset: {e}")
+
+
+if __name__ == "__main__":
+     main()
